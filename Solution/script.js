@@ -1,4 +1,3 @@
-// Defines the functions factorial, binomialCoefficient, and expectedValue for factorial calculations, binomial coefficient calculations, and expected value calculation using the formula discussed earlier
 function factorial(n) {
     if (n === 0 || n === 1) return 1;
     let result = 1;
@@ -13,12 +12,36 @@ function binomialCoefficient(n, k) {
     return factorial(n) / (factorial(k) * factorial(n - k));
 }
 
-function expectedValue(N, X) {
+function expectedValueForList(values, X) {
+    let N = values.length;
     let sum = 0;
-    for (let k = X; k <= N; k++) {
-        sum += k * binomialCoefficient(k - 1, X - 1);
+    let pairCounts = {};
+    
+    // Create a dictionary to count pairs
+    for (let i = 0; i < N; i++) {
+        for (let j = i + 1; j < N; j++) {
+            let pair = [values[i], values[j]].sort((a, b) => a - b);
+            let pairKey = pair.toString();
+            if (pairCounts[pairKey]) {
+                pairCounts[pairKey]++;
+            } else {
+                pairCounts[pairKey] = 1;
+            }
+        }
     }
-    return sum / binomialCoefficient(N, X);
+    
+    // Calculate total pairs
+    let totalPairs = Object.values(pairCounts).reduce((acc, count) => acc + count, 0);
+    
+    // Calculate expected value
+    for (let pairKey in pairCounts) {
+        let pair = pairKey.split(',').map(Number);
+        let maxValue = Math.max(pair[0], pair[1]);
+        let pairProbability = pairCounts[pairKey] / totalPairs;
+        sum += maxValue * pairProbability;
+    }
+    
+    return sum;
 }
 
 document.addEventListener('DOMContentLoaded', function() {
@@ -27,9 +50,16 @@ document.addEventListener('DOMContentLoaded', function() {
 
     form.addEventListener('submit', function(event) {
         event.preventDefault();
-        const N = parseInt(document.getElementById('N').value);
+        const listInput = document.getElementById('list').value;
         const X = parseInt(document.getElementById('X').value);
-        const expected = expectedValue(N, X);
-        resultDiv.innerHTML = `<p>Expected value: ${expected.toFixed(4)}</p>`; //toFixed lowers decimals
+        const values = listInput.split(',').map(item => parseInt(item.trim()));
+        
+        if (X !== 2) {
+            resultDiv.innerHTML = `<p>Error: This code currently only handles X = 2</p>`;
+            return;
+        }
+
+        const expected = expectedValueForList(values, X);
+        resultDiv.innerHTML = `<p>Expected value: ${expected.toFixed(4)}</p>`;
     });
 });
