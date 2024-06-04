@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Expected Value Calculation</title>
+    <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+    <div class="container">
+        <h1>Expected Value Calculation</h1>
+        <p>Calculate the expected value of the highest number when selecting X items from a list of N items.</p>
+        <form id="form">
+            <label for="N">Enter the total number of items (N):</label>
+            <input type="number" id="N" name="N" min="1" required>
+            <label for="X">Enter the number of items to select (X):</label>
+            <input type="number" id="X" name="X" min="1" required>
+            <button type="submit">Calculate</button>
+        </form>
+        <div id="result"></div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
