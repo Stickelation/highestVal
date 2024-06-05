@@ -8,47 +8,24 @@ function factorial(n) {
 }
 
 function binomialCoefficient(n, k) {
-    if (k > n) return 0;
+    if (k > n || k < 0) return 0;
     return factorial(n) / (factorial(k) * factorial(n - k));
 }
 
 function expectedValueForList(values, X) {
     let N = values.length;
     let sum = 0;
-    let combCounts = {};
-    
-    // Create a dictionary to count combinations
-    function generateCombinations(arr, data, start, end, index, r) {
-        if (index === r) {
-            let combination = data.slice(0, r).sort((a, b) => a - b);
-            let combKey = combination.toString();
-            if (combCounts[combKey]) {
-                combCounts[combKey]++;
-            } else {
-                combCounts[combKey] = 1;
-            }
-            return;
-        }
 
-        for (let i = start; i <= end && end - i + 1 >= r - index; i++) {
-            data[index] = arr[i];
-            generateCombinations(arr, data, i + 1, end, index + 1, r);
-        }
+    values.sort((a, b) => a - b); // Sort the values in ascending order
+
+    let binomNX = binomialCoefficient(N, X); // Precompute binomial coefficient (N, X)
+
+    for (let i = X; i <= N; i++) {
+        let value = values[i - 1]; // Adjust index for 0-based indexing in JavaScript
+        let probability = binomialCoefficient(i - 1, X - 1) / binomNX;
+        sum += value * probability;
     }
 
-    generateCombinations(values, new Array(X), 0, N - 1, 0, X);
-    
-    // Calculate total combinations
-    let totalCombinations = Object.values(combCounts).reduce((acc, count) => acc + count, 0);
-    
-    // Calculate expected value
-    for (let combKey in combCounts) {
-        let combination = combKey.split(',').map(Number);
-        let maxValue = Math.max(...combination);
-        let combProbability = combCounts[combKey] / totalCombinations;
-        sum += maxValue * combProbability;
-    }
-    
     return sum;
 }
 
