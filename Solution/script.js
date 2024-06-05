@@ -1,15 +1,14 @@
-function factorial(n) {
-    if (n === 0 || n === 1) return 1;
-    let result = 1;
+function logFactorial(n) {
+    let result = 0;
     for (let i = 2; i <= n; i++) {
-        result *= i;
+        result += Math.log(i);
     }
     return result;
 }
 
-function binomialCoefficient(n, k) {
-    if (k > n || k < 0) return 0;
-    return factorial(n) / (factorial(k) * factorial(n - k));
+function logBinomialCoefficient(n, k) {
+    if (k > n || k < 0) return -Infinity;
+    return logFactorial(n) - logFactorial(k) - logFactorial(n - k);
 }
 
 function expectedValueForList(values, X) {
@@ -18,11 +17,12 @@ function expectedValueForList(values, X) {
 
     values.sort((a, b) => a - b); // Sort the values in ascending order
 
-    let binomNX = binomialCoefficient(N, X); // Precompute binomial coefficient (N, X)
+    let logBinomNX = logBinomialCoefficient(N, X); // Precompute log binomial coefficient (N, X)
 
     for (let i = X; i <= N; i++) {
         let value = values[i - 1]; // Adjust index for 0-based indexing in JavaScript
-        let probability = binomialCoefficient(i - 1, X - 1) / binomNX;
+        let logProbability = logBinomialCoefficient(i - 1, X - 1) - logBinomNX;
+        let probability = Math.exp(logProbability);
         sum += value * probability;
     }
 
